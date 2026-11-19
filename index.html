@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recebimento & Envio para Compras</title>
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">Controle de Recebimento &amp; Compras</h1>
+          <p class="text-xs text-slate-500">Atualize pendências, registre entregas e gere o e-mail formatado em 1 clique</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="btn-history" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Histórico (<span id="history-count">0</span>)
+        </button>
+        <button id="btn-settings" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Colunas &amp; Backup
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 py-5 grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1">
+    <!-- Left Column: Entry & Lists (7 cols) -->
+    <section class="lg:col-span-7 flex flex-col gap-5">
+      <!-- Quick Email Config Bar -->
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label for="delivery-date" class="block text-xs font-semibold text-slate-600 mb-1">Data do Recebimento</label>
+            <input id="delivery-date" type="date" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" />
+          </div>
+          <div>
+            <label for="compras-email" class="block text-xs font-semibold text-slate-600 mb-1">E-mail do Compras</label>
+            <input id="compras-email" type="email" placeholder="compras@empresa.com.br" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" />
+          </div>
+          <div>
+            <label for="email-subject" class="block text-xs font-semibold text-slate-600 mb-1">Assunto do E-mail</label>
+            <input id="email-subject" type="text" placeholder="Material Entregue" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Fast Add Item Form -->
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            Adicionar Item Rápido
+          </h2>
+          <button id="btn-bulk-paste" type="button" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 hover:underline">
+            + Colar vários itens de uma vez
+          </button>
+        </div>
+
+        <form id="add-item-form" class="grid grid-cols-12 gap-2.5">
+          <div class="col-span-4 sm:col-span-2">
+            <label for="inp-col1" class="block text-[11px] font-semibold text-slate-500 mb-1 truncate" data-col-label="0">Qtd</label>
+            <input id="inp-col1" type="text" placeholder="10" class="w-full px-2.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" required />
+          </div>
+          <div class="col-span-8 sm:col-span-2">
+            <label for="inp-col2" class="block text-[11px] font-semibold text-slate-500 mb-1 truncate" data-col-label="1">Unid / OC</label>
+            <input id="inp-col2" type="text" placeholder="UN" class="w-full px-2.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" />
+          </div>
+          <div class="col-span-12 sm:col-span-5">
+            <label for="inp-col3" class="block text-[11px] font-semibold text-slate-500 mb-1 truncate" data-col-label="2">Descrição do Material</label>
+            <input id="inp-col3" type="text" placeholder="Ex: Parafuso sextavado M8" class="w-full px-2.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" required />
+          </div>
+          <div class="col-span-12 sm:col-span-3">
+            <label for="inp-col4" class="block text-[11px] font-semibold text-slate-500 mb-1 truncate" data-col-label="3">Fornecedor / Obs</label>
+            <input id="inp-col4" type="text" placeholder="Ex: NF 1234" class="w-full px-2.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" />
+          </div>
+
+          <div class="col-span-12 flex flex-wrap items-center gap-2 pt-1">
+            <button type="submit" data-target="delivered" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              Entregue Hoje
+            </button>
+            <button type="button" id="btn-add-pending" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-lg transition cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Ficou Pendente
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Pending Items (Material Faltando) -->
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[11px] font-bold bg-amber-100 text-amber-800 rounded-full" id="pending-count">0</span>
+              PENDÊNCIAS (Material Faltando)
+            </h2>
+            <p class="text-xs text-slate-500">Salvo automaticamente. Clique em <strong>Chegou</strong> quando o material for entregue.</p>
+          </div>
+          <div class="relative w-full sm:w-52">
+            <input id="pending-search" type="text" placeholder="Buscar pendência..." class="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" />
+            <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+
+        <div id="pending-list" class="space-y-2 max-h-80 overflow-y-auto custom-scroll pr-1"></div>
+      </div>
+
+      <!-- Delivered Items (Materiais Entregues Hoje) -->
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[11px] font-bold bg-emerald-100 text-emerald-800 rounded-full" id="delivered-count">0</span>
+              MATERIAIS ENTREGUES (Envio Atual)
+            </h2>
+            <p class="text-xs text-slate-500">Itens que serão listados como entregues no e-mail de hoje.</p>
+          </div>
+          <button id="btn-clear-delivered" type="button" class="text-xs font-medium text-rose-600 hover:text-rose-800 hover:underline">
+            Limpar Entregues (Novo Dia)
+          </button>
+        </div>
+
+        <div id="delivered-list" class="space-y-2 max-h-72 overflow-y-auto custom-scroll pr-1"></div>
+      </div>
+    </section>
+
+    <!-- Right Column: Email Preview & Send Actions (5 cols) -->
+    <aside class="lg:col-span-5 flex flex-col gap-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm lg:sticky lg:top-20 flex flex-col gap-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900">Pré-visualização do E-mail</h2>
+            <p class="text-xs text-slate-500">Pronto para colar no Gmail/Outlook ou abrir direto</p>
+          </div>
+          <div class="inline-flex rounded-lg bg-slate-100 p-0.5 text-xs">
+            <button id="btn-theme-light" type="button" class="px-2.5 py-1 rounded-md font-medium transition bg-white text-slate-900 shadow-sm">Claro</button>
+            <button id="btn-theme-dark" type="button" class="px-2.5 py-1 rounded-md font-medium transition text-slate-600 hover:text-slate-900">Escuro</button>
+          </div>
+        </div>
+
+        <!-- Rendered Email Preview Box -->
+        <div id="email-preview-wrapper" class="rounded-lg border border-slate-200 p-4 overflow-x-auto bg-white text-slate-900 transition-colors">
+          <div id="email-preview-content"></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <button id="btn-copy-html" type="button" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
+            Copiar Tabela p/ E-mail
+          </button>
+
+          <button id="btn-mailto" type="button" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg transition cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Abrir no App de E-mail
+          </button>
+        </div>
+
+        <button id="btn-save-history" type="button" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Salvar no Histórico e Iniciar Novo Dia
+        </button>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2 px-4 py-2.5 rounded-lg shadow-lg text-xs font-semibold text-white bg-slate-900"></div>
+
+  <!-- Modal: Partial Delivery -->
+  <div id="modal-partial" class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-900/50 p-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-5 shadow-xl">
+      <h3 class="text-sm font-bold text-slate-900 mb-1">Entrega Parcial</h3>
+      <p id="partial-item-desc" class="text-xs text-slate-600 mb-4"></p>
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div>
+          <label for="partial-arrived" class="block text-xs font-semibold text-slate-600 mb-1">Quantidade que Chegou</label>
+          <input id="partial-arrived" type="number" step="any" min="0.01" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900" />
+        </div>
+        <div>
+          <label for="partial-remaining" class="block text-xs font-semibold text-slate-600 mb-1">Restante Pendente</label>
+          <input id="partial-remaining" type="text" readonly class="w-full px-3 py-2 text-sm bg-slate-100 border border-slate-200 rounded-lg text-slate-600" />
+        </div>
+      </div>
+      <div class="flex justify-end gap-2">
+        <button id="btn-partial-cancel" type="button" class="px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+        <button id="btn-partial-confirm" type="button" class="px-4 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg">Confirmar Entrega</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Bulk Paste -->
+  <div id="modal-bulk" class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-900/50 p-4">
+    <div class="bg-white rounded-xl max-w-lg w-full p-5 shadow-xl">
+      <h3 class="text-sm font-bold text-slate-900 mb-1">Colar Vários Itens</h3>
+      <p class="text-xs text-slate-500 mb-3">Cole linhas do Excel, Sheets ou texto separadas por Tab, ponto e vírgula (<code>;</code>) ou vírgula:<br><code>Qtd ; Unid/OC ; Descrição ; Fornecedor/Obs</code></p>
+      <textarea id="bulk-textarea" rows="6" placeholder="10; UN; Parafuso M8; NF 4521&#10;5; CX; Abraçadeira 3/4; Pedido 890" class="w-full p-3 text-xs font-mono border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900 mb-3"></textarea>
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-3 text-xs">
+          <label class="inline-flex items-center gap-1.5 cursor-pointer">
+            <input type="radio" name="bulk-target" value="pending" checked class="accent-slate-900" />
+            <span>Adicionar em Pendências</span>
+          </label>
+          <label class="inline-flex items-center gap-1.5 cursor-pointer">
+            <input type="radio" name="bulk-target" value="delivered" class="accent-slate-900" />
+            <span>Adicionar em Entregues</span>
+          </label>
+        </div>
+        <div class="flex gap-2">
+          <button id="btn-bulk-cancel" type="button" class="px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+          <button id="btn-bulk-confirm" type="button" class="px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg">Importar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Settings (Columns & Backup) -->
+  <div id="modal-settings" class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-900/50 p-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-5 shadow-xl">
+      <h3 class="text-sm font-bold text-slate-900 mb-3">Personalizar Colunas &amp; Backup</h3>
+      <div class="space-y-2.5 mb-4">
+        <p class="text-xs text-slate-500">Nomes das 4 colunas das tabelas:</p>
+        <div class="grid grid-cols-2 gap-2">
+          <input id="cfg-col0" type="text" class="px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg" placeholder="Coluna 1 (Ex: Qtd)" />
+          <input id="cfg-col1" type="text" class="px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg" placeholder="Coluna 2 (Ex: Unid)" />
+          <input id="cfg-col2" type="text" class="px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg" placeholder="Coluna 3 (Ex: Descrição)" />
+          <input id="cfg-col3" type="text" class="px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg" placeholder="Coluna 4 (Ex: Obs/Pedido)" />
+        </div>
+      </div>
+      <div class="border-t border-slate-200 pt-3 mb-4 flex flex-wrap gap-2">
+        <button id="btn-export-json" type="button" class="px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg">Exportar Backup (.json)</button>
+        <label class="px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg cursor-pointer">
+          Importar Backup
+          <input id="inp-import-json" type="file" accept=".json" class="hidden" />
+        </label>
+      </div>
+      <div class="flex justify-end gap-2">
+        <button id="btn-settings-cancel" type="button" class="px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Fechar</button>
+        <button id="btn-settings-save" type="button" class="px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg">Salvar Colunas</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: History -->
+  <div id="modal-history" class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-900/50 p-4">
+    <div class="bg-white rounded-xl max-w-lg w-full p-5 shadow-xl max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold text-slate-900">Histórico de Envios</h3>
+        <button id="btn-history-close" type="button" class="text-xs font-semibold text-slate-500 hover:text-slate-800">Fechar</button>
+      </div>
+      <div id="history-list" class="space-y-2.5 overflow-y-auto custom-scroll flex-1 pr-1"></div>
+    </div>
+  </div>
+
+  <!-- Modal: Confirm Clear -->
+  <div id="modal-confirm" class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-900/50 p-4">
+    <div class="bg-white rounded-xl max-w-sm w-full p-5 shadow-xl">
+      <h3 id="confirm-title" class="text-sm font-bold text-slate-900 mb-1">Confirmar ação</h3>
+      <p id="confirm-msg" class="text-xs text-slate-600 mb-4"></p>
+      <div class="flex justify-end gap-2">
+        <button id="btn-confirm-no" type="button" class="px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+        <button id="btn-confirm-yes" type="button" class="px-4 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = 'compras_recebimento_v1';
+
+      function getTodayISO() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      }
+
+      function formatBRDate(iso) {
+        if (!iso || !iso.includes('-')) return iso || '';
+        const [y, m, d] = iso.split('-');
+        return `${d}/${m}/${y}`;
+      }
+
+      function uid() {
+        return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      }
+
+      function escapeHtml(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      const defaultState = {
+        date: getTodayISO(),
+        comprasEmail: '',
+        subject: 'Material Entregue',
+        previewTheme: 'light',
+        columns: ['Qtd', 'Unid / OC', 'Descrição do Material', 'Fornecedor / Obs'],
+        pending: [
+          { id: uid(), col1: '10', col2: 'UN', col3: 'Parafuso sextavado M8 inox (Exemplo)', col4: 'OC 1042' },
+          { id: uid(), col1: '4', col2: 'CX', col3: 'Luva nitrílica tam. G (Exemplo)', col4: 'OC 1045' }
+        ],
+        delivered: [
+          { id: uid(), col1: '2', col2: 'PC', col3: 'Válvula esfera 1/2" latão (Exemplo)', col4: 'NF 8821' }
+        ],
+        history: []
+      };
+
+      let state = loadState();
+      let activePartialId = null;
+      let pendingConfirmCallback = null;
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return JSON.parse(JSON.stringify(defaultState));
+          const parsed = JSON.parse(raw);
+          return {
+            ...defaultState,
+            ...parsed,
+            date: parsed.date || getTodayISO(),
+            columns: Array.isArray(parsed.columns) && parsed.columns.length === 4 ? parsed.columns : defaultState.columns,
+            pending: Array.isArray(parsed.pending) ? parsed.pending : [],
+            delivered: Array.isArray(parsed.delivered) ? parsed.delivered : [],
+            history: Array.isArray(parsed.history) ? parsed.history : []
+          };
+        } catch (e) {
+          return JSON.parse(JSON.stringify(defaultState));
+        }
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {
+          // Ignore storage quota / sandbox restriction errors
+        }
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.remove('hidden');
+        toast.classList.add('flex');
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => {
+          toast.classList.add('hidden');
+          toast.classList.remove('flex');
+        }, 2800);
+      }
+
+      function openConfirm(title, msg, onConfirm) {
+        document.getElementById('confirm-title').textContent = title;
+        document.getElementById('confirm-msg').textContent = msg;
+        pendingConfirmCallback = onConfirm;
+        const modal = document.getElementById('modal-confirm');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+
+      function closeConfirm() {
+        const modal = document.getElementById('modal-confirm');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        pendingConfirmCallback = null;
+      }
+
+      function renderColumnLabels() {
+        document.querySelectorAll('[data-col-label]').forEach((el) => {
+          const idx = Number(el.getAttribute('data-col-label'));
+          el.textContent = state.columns[idx] || `Col ${idx + 1}`;
+        });
+      }
+
+      function renderPendingList() {
+        const container = document.getElementById('pending-list');
+        const query = document.getElementById('pending-search').value.trim().toLowerCase();
+        document.getElementById('pending-count').textContent = state.pending.length;
+
+        const filtered = state.pending.filter((item) => {
+          if (!query) return true;
+          return `${item.col1} ${item.col2} ${item.col3} ${item.col4}`.toLowerCase().includes(query);
+        });
+
+        if (filtered.length === 0) {
+          container.innerHTML = `<div class="text-center py-6 text-xs text-slate-400 border border-dashed border-slate-200 rounded-lg">${
+            state.pending.length === 0 ? 'Nenhuma pendência no momento.' : 'Nenhum item encontrado para a busca.'
+          }</div>`;
+          return;
+        }
+
+        container.innerHTML = filtered
+          .map((item) => {
+            const numQty = parseFloat(String(item.col1).replace(',', '.'));
+            const canPartial = !Number.isNaN(numQty) && numQty > 1;
+            return `
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg border border-amber-200 bg-amber-50/50 hover:bg-amber-50 transition">
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="px-2 py-0.5 text-xs font-bold bg-white border border-amber-200 rounded text-slate-800">${escapeHtml(item.col1)} ${escapeHtml(item.col2)}</span>
+                    <span class="text-xs font-semibold text-slate-900 truncate">${escapeHtml(item.col3)}</span>
+                  </div>
+                  ${item.col4 ? `<p class="text-[11px] text-slate-500 mt-0.5 truncate">${escapeHtml(item.col4)}</p>` : ''}
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button type="button" data-action="deliver-full" data-id="${item.id}" class="px-2.5 py-1 text-[11px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-md transition cursor-pointer">
+                    Chegou Tudo
+                  </button>
+                  ${
+                    canPartial
+                      ? `<button type="button" data-action="deliver-partial" data-id="${item.id}" class="px-2.5 py-1 text-[11px] font-semibold text-amber-900 bg-amber-200 hover:bg-amber-300 rounded-md transition cursor-pointer">Parcial</button>`
+                      : ''
+                  }
+                  <button type="button" data-action="delete-pending" data-id="${item.id}" title="Remover" class="p-1 text-slate-400 hover:text-rose-600 rounded transition cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            `;
+          })
+          .join('');
+      }
+
+      function renderDeliveredList() {
+        const container = document.getElementById('delivered-list');
+        document.getElementById('delivered-count').textContent = state.delivered.length;
+
+        if (state.delivered.length === 0) {
+          container.innerHTML = `<div class="text-center py-6 text-xs text-slate-400 border border-dashed border-slate-200 rounded-lg">Nenhum item entregue registrado para este envio.</div>`;
+          return;
+        }
+
+        container.innerHTML = state.delivered
+          .map(
+            (item) => `
+            <div class="flex items-center justify-between gap-2 p-2.5 rounded-lg border border-emerald-200 bg-emerald-50/40">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="px-2 py-0.5 text-xs font-bold bg-white border border-emerald-200 rounded text-slate-800">${escapeHtml(item.col1)} ${escapeHtml(item.col2)}</span>
+                  <span class="text-xs font-semibold text-slate-900 truncate">${escapeHtml(item.col3)}</span>
+                </div>
+                ${item.col4 ? `<p class="text-[11px] text-slate-500 mt-0.5 truncate">${escapeHtml(item.col4)}</p>` : ''}
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button type="button" data-action="move-back-pending" data-id="${item.id}" class="px-2 py-1 text-[11px] font-medium text-slate-600 hover:text-amber-800 hover:bg-amber-100 rounded transition cursor-pointer">
+                  Voltar p/ Pendência
+                </button>
+                <button type="button" data-action="delete-delivered" data-id="${item.id}" title="Remover" class="p-1 text-slate-400 hover:text-rose-600 rounded transition cursor-pointer">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          `
+          )
+          .join('');
+      }
+
+      function buildEmailHTML(forClipboard) {
+        const isDark = !forClipboard && state.previewTheme === 'dark';
+        const textColor = isDark ? '#e2e8f0' : '#1e293b';
+        const borderColor = isDark ? '#94a3b8' : '#334155';
+        const headerBg = isDark ? '#262626' : '#f1f5f9';
+        const subHeaderBg = isDark ? '#1e1e1e' : '#f8fafc';
+        const redAccent = '#dc2626';
+        const dateStr = formatBRDate(state.date);
+
+        const renderRows = (items, emptyText) => {
+          if (items.length === 0) {
+            return `<tr><td colspan="4" style="border:1px solid ${borderColor};padding:6px 8px;text-align:center;color:#64748b;font-style:italic;font-size:12px;">${emptyText}</td></tr>`;
+          }
+          return items
+            .map(
+              (it) => `
+              <tr>
+                <td style="border:1px solid ${borderColor};padding:5px 8px;width:10%;text-align:center;font-size:12px;color:${textColor};">${escapeHtml(it.col1)}</td>
+                <td style="border:1px solid ${borderColor};padding:5px 8px;width:14%;text-align:center;font-size:12px;color:${textColor};">${escapeHtml(it.col2)}</td>
+                <td style="border:1px solid ${borderColor};padding:5px 8px;width:52%;font-size:12px;color:${textColor};">${escapeHtml(it.col3)}</td>
+                <td style="border:1px solid ${borderColor};padding:5px 8px;width:24%;font-size:12px;color:${textColor};">${escapeHtml(it.col4)}</td>
+              </tr>`
+            )
+            .join('');
+        };
+
+        const colHeaders = state.columns
+          .map(
+            (c) =>
+              `<th style="border:1px solid ${borderColor};padding:4px 8px;background:${subHeaderBg};font-size:11px;font-weight:600;color:${textColor};text-align:left;">${escapeHtml(c)}</th>`
+          )
+          .join('');
+
+        return `
+          <div style="font-family:Arial,Helvetica,sans-serif;color:${textColor};font-size:13px;line-height:1.4;">
+            <p style="margin:0 0 12px 0;font-style:italic;">
+              SEGUE ABAIXO MATERIAL ENTREGUE: <span style="background:#fef08a;color:#b91c1c;font-weight:bold;padding:1px 4px;">${escapeHtml(dateStr)}.</span>
+            </p>
+            <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+              <thead>
+                <tr>
+                  <th colspan="4" style="border:1px solid ${borderColor};padding:6px 8px;background:${headerBg};color:${redAccent};font-weight:bold;font-size:13px;text-align:center;letter-spacing:0.5px;">MATERIAIS ENTREGUES</th>
+                </tr>
+                <tr>${colHeaders}</tr>
+              </thead>
+              <tbody>
+                ${renderRows(state.delivered, 'Nenhum material entregue nesta data.')}
+              </tbody>
+            </table>
+
+            <p style="margin:0 0 8px 0;color:${redAccent};font-style:italic;font-weight:bold;">MATERIAL FALTANDO:</p>
+            <table style="width:100%;border-collapse:collapse;">
+              <thead>
+                <tr>
+                  <th colspan="4" style="border:1px solid ${borderColor};padding:6px 8px;background:${headerBg};color:${redAccent};font-weight:bold;font-size:13px;text-align:center;letter-spacing:0.5px;">PENDENCIAS</th>
+                </tr>
+                <tr>${colHeaders}</tr>
+              </thead>
+              <tbody>
+                ${renderRows(state.pending, 'Nenhuma pendência no momento.')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      function buildPlainTextEmail() {
+        const dateStr = formatBRDate(state.date);
+        const fmt = (items, empty) =>
+          items.length === 0
+            ? `  (${empty})`
+            : items.map((i) => `  - ${i.col1} ${i.col2} | ${i.col3}${i.col4 ? ' | ' + i.col4 : ''}`).join('\n');
+
+        return [
+          `SEGUE ABAIXO MATERIAL ENTREGUE: ${dateStr}.`,
+          '',
+          'MATERIAIS ENTREGUES:',
+          fmt(state.delivered, 'Nenhum material entregue'),
+          '',
+          'MATERIAL FALTANDO (PENDENCIAS):',
+          fmt(state.pending, 'Nenhuma pendência')
+        ].join('\n');
+      }
+
+      function renderEmailPreview() {
+        const wrapper = document.getElementById('email-preview-wrapper');
+        const btnLight = document.getElementById('btn-theme-light');
+        const btnDark = document.getElementById('btn-theme-dark');
+        if (state.previewTheme === 'dark') {
+          wrapper.classList.remove('bg-white');
+          wrapper.classList.add('bg-neutral-900');
+          btnDark.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+          btnDark.classList.remove('text-slate-600');
+          btnLight.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+          btnLight.classList.add('text-slate-600');
+        } else {
+          wrapper.classList.add('bg-white');
+          wrapper.classList.remove('bg-neutral-900');
+          btnLight.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+          btnLight.classList.remove('text-slate-600');
+          btnDark.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+          btnDark.classList.add('text-slate-600');
+        }
+        document.getElementById('email-preview-content').innerHTML = buildEmailHTML(false);
+      }
+
+      function renderAll() {
+        document.getElementById('delivery-date').value = state.date;
+        document.getElementById('compras-email').value = state.comprasEmail;
+        document.getElementById('email-subject').value = state.subject;
+        document.getElementById('history-count').textContent = state.history.length;
+        renderColumnLabels();
+        renderPendingList();
+        renderDeliveredList();
+        renderEmailPreview();
+        saveState();
+      }
+
+      // Add Item Actions
+      function addItem(target) {
+        const col1 = document.getElementById('inp-col1').value.trim();
+        const col2 = document.getElementById('inp-col2').value.trim();
+        const col3 = document.getElementById('inp-col3').value.trim();
+        const col4 = document.getElementById('inp-col4').value.trim();
+        if (!col1 || !col3) {
+          showToast('Preencha pelo menos Qtd e Descrição.');
+          return;
+        }
+        const item = { id: uid(), col1, col2, col3, col4 };
+        if (target === 'delivered') {
+          state.delivered.push(item);
+          showToast('Adicionado em Materiais Entregues!');
+        } else {
+          state.pending.push(item);
+          showToast('Adicionado em Pendências!');
+        }
+        document.getElementById('add-item-form').reset();
+        document.getElementById('inp-col1').focus();
+        renderAll();
+      }
+
+      document.getElementById('add-item-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        addItem('delivered');
+      });
+
+      document.getElementById('btn-add-pending').addEventListener('click', () => {
+        addItem('pending');
+      });
+
+      // Config inputs
+      document.getElementById('delivery-date').addEventListener('change', (e) => {
+        state.date = e.target.value || getTodayISO();
+        renderAll();
+      });
+      document.getElementById('compras-email').addEventListener('input', (e) => {
+        state.comprasEmail = e.target.value;
+        saveState();
+      });
+      document.getElementById('email-subject').addEventListener('input', (e) => {
+        state.subject = e.target.value;
+        saveState();
+      });
+
+      document.getElementById('pending-search').addEventListener('input', renderPendingList);
+
+      // List Event Delegation
+      document.getElementById('pending-list').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-action]');
+        if (!btn) return;
+        const id = btn.getAttribute('data-id');
+        const action = btn.getAttribute('data-action');
+        const idx = state.pending.findIndex((i) => i.id === id);
+        if (idx === -1) return;
+
+        if (action === 'deliver-full') {
+          const [item] = state.pending.splice(idx, 1);
+          state.delivered.push(item);
+          showToast('Movido para Entregues!');
+          renderAll();
+        } else if (action === 'deliver-partial') {
+          activePartialId = id;
+          const item = state.pending[idx];
+          document.getElementById('partial-item-desc').textContent = `${item.col1} ${item.col2} — ${item.col3}`;
+          const arrivedInp = document.getElementById('partial-arrived');
+          arrivedInp.value = '';
+          arrivedInp.max = parseFloat(String(item.col1).replace(',', '.'));
+          document.getElementById('partial-remaining').value = item.col1;
+          const modal = document.getElementById('modal-partial');
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+          arrivedInp.focus();
+        } else if (action === 'delete-pending') {
+          state.pending.splice(idx, 1);
+          renderAll();
+        }
+      });
+
+      document.getElementById('delivered-list').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-action]');
+        if (!btn) return;
+        const id = btn.getAttribute('data-id');
+        const action = btn.getAttribute('data-action');
+        const idx = state.delivered.findIndex((i) => i.id === id);
+        if (idx === -1) return;
+
+        if (action === 'move-back-pending') {
+          const [item] = state.delivered.splice(idx, 1);
+          state.pending.push(item);
+          showToast('Devolvido para Pendências.');
+          renderAll();
+        } else if (action === 'delete-delivered') {
+          state.delivered.splice(idx, 1);
+          renderAll();
+        }
+      });
+
+      // Partial Delivery Modal Logic
+      document.getElementById('partial-arrived').addEventListener('input', (e) => {
+        const item = state.pending.find((i) => i.id === activePartialId);
+        if (!item) return;
+        const total = parseFloat(String(item.col1).replace(',', '.')) || 0;
+        const arrived = parseFloat(e.target.value) || 0;
+        const rem = Math.max(0, Number((total - arrived).toFixed(2)));
+        document.getElementById('partial-remaining').value = rem;
+      });
+
+      document.getElementById('btn-partial-cancel').addEventListener('click', () => {
+        document.getElementById('modal-partial').classList.add('hidden');
+        document.getElementById('modal-partial').classList.remove('flex');
+        activePartialId = null;
+      });
+
+      document.getElementById('btn-partial-confirm').addEventListener('click', () => {
+        const idx = state.pending.findIndex((i) => i.id === activePartialId);
+        if (idx === -1) return;
+        const item = state.pending[idx];
+        const total = parseFloat(String(item.col1).replace(',', '.')) || 0;
+        const arrived = parseFloat(document.getElementById('partial-arrived').value);
+        if (Number.isNaN(arrived) || arrived <= 0 || arrived > total) {
+          showToast(`Informe uma quantidade entre 0.01 e ${total}.`);
+          return;
+        }
+        const rem = Number((total - arrived).toFixed(2));
+        state.delivered.push({ ...item, id: uid(), col1: String(arrived) });
+        if (rem <= 0) {
+          state.pending.splice(idx, 1);
+        } else {
+          state.pending[idx].col1 = String(rem);
+        }
+        document.getElementById('modal-partial').classList.add('hidden');
+        document.getElementById('modal-partial').classList.remove('flex');
+        activePartialId = null;
+        showToast('Entrega parcial registrada!');
+        renderAll();
+      });
+
+      // Clear Delivered
+      document.getElementById('btn-clear-delivered').addEventListener('click', () => {
+        if (state.delivered.length === 0) return;
+        openConfirm('Limpar Materiais Entregues?', 'Isso remove apenas os itens da lista de entregues de hoje. Suas pendências continuam salvas.', () => {
+          state.delivered = [];
+          renderAll();
+          showToast('Lista de entregues limpa.');
+        });
+      });
+
+      // Theme Toggle
+      document.getElementById('btn-theme-light').addEventListener('click', () => {
+        state.previewTheme = 'light';
+        renderAll();
+      });
+      document.getElementById('btn-theme-dark').addEventListener('click', () => {
+        state.previewTheme = 'dark';
+        renderAll();
+      });
+
+      // Copy Rich HTML Table to Clipboard
+      document.getElementById('btn-copy-html').addEventListener('click', async () => {
+        const html = buildEmailHTML(true);
+        const text = buildPlainTextEmail();
+
+        try {
+          if (navigator.clipboard && window.ClipboardItem) {
+            const htmlBlob = new Blob([html], { type: 'text/html' });
+            const textBlob = new Blob([text], { type: 'text/plain' });
+            await navigator.clipboard.write([new ClipboardItem({ 'text/html': htmlBlob, 'text/plain': textBlob })]);
+            showToast('Tabela formatada copiada! Cole (Ctrl+V) no e-mail.');
+            return;
+          }
+        } catch (err) {
+          // Fall through to execCommand fallback
+        }
+
+        // Fallback via temporary contenteditable container
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        temp.style.position = 'fixed';
+        temp.style.left = '-9999px';
+        document.body.appendChild(temp);
+        const range = document.createRange();
+        range.selectNodeContents(temp);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        try {
+          document.execCommand('copy');
+          showToast('Tabela copiada! Cole (Ctrl+V) no e-mail.');
+        } catch (e) {
+          showToast('Não foi possível copiar automaticamente.');
+        }
+        sel.removeAllRanges();
+        document.body.removeChild(temp);
+      });
+
+      // Open mailto
+      document.getElementById('btn-mailto').addEventListener('click', () => {
+        const to = encodeURIComponent(state.comprasEmail.trim());
+        const subj = encodeURIComponent(`${state.subject || 'Material Entregue'} - ${formatBRDate(state.date)}`);
+        const body = encodeURIComponent(buildPlainTextEmail());
+        window.open(`mailto:${to}?subject=${subj}&body=${body}`, '_blank');
+      });
+
+      // Save History & Start New Day
+      document.getElementById('btn-save-history').addEventListener('click', () => {
+        if (state.delivered.length === 0 && state.pending.length === 0) {
+          showToast('Adicione itens antes de salvar no histórico.');
+          return;
+        }
+        state.history.unshift({
+          id: uid(),
+          date: state.date,
+          savedAt: new Date().toLocaleString('pt-BR'),
+          deliveredCount: state.delivered.length,
+          pendingCount: state.pending.length,
+          delivered: JSON.parse(JSON.stringify(state.delivered)),
+          pending: JSON.parse(JSON.stringify(state.pending))
+        });
+        state.delivered = [];
+        state.date = getTodayISO();
+        renderAll();
+        showToast('Envio salvo no histórico! Lista de entregues zerada.');
+      });
+
+      // Bulk Paste Modal
+      document.getElementById('btn-bulk-paste').addEventListener('click', () => {
+        document.getElementById('bulk-textarea').value = '';
+        const m = document.getElementById('modal-bulk');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      });
+      document.getElementById('btn-bulk-cancel').addEventListener('click', () => {
+        document.getElementById('modal-bulk').classList.add('hidden');
+        document.getElementById('modal-bulk').classList.remove('flex');
+      });
+      document.getElementById('btn-bulk-confirm').addEventListener('click', () => {
+        const raw = document.getElementById('bulk-textarea').value.trim();
+        if (!raw) return;
+        const target = document.querySelector('input[name="bulk-target"]:checked').value;
+        const lines = raw.split(/\r?\n/).filter((l) => l.trim());
+        let added = 0;
+        lines.forEach((line) => {
+          const parts = line.split(/\t|;|,/).map((p) => p.trim());
+          if (parts.length >= 2) {
+            const item = {
+              id: uid(),
+              col1: parts[0] || '1',
+              col2: parts.length >= 3 ? parts[1] : '',
+              col3: parts.length >= 3 ? parts[2] : parts[1],
+              col4: parts[3] || ''
+            };
+            if (target === 'delivered') state.delivered.push(item);
+            else state.pending.push(item);
+            added++;
+          }
+        });
+        document.getElementById('modal-bulk').classList.add('hidden');
+        document.getElementById('modal-bulk').classList.remove('flex');
+        renderAll();
+        showToast(`${added} item(ns) importado(s)!`);
+      });
+
+      // Settings Modal
+      document.getElementById('btn-settings').addEventListener('click', () => {
+        state.columns.forEach((c, idx) => {
+          document.getElementById(`cfg-col${idx}`).value = c;
+        });
+        const m = document.getElementById('modal-settings');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      });
+      document.getElementById('btn-settings-cancel').addEventListener('click', () => {
+        document.getElementById('modal-settings').classList.add('hidden');
+        document.getElementById('modal-settings').classList.remove('flex');
+      });
+      document.getElementById('btn-settings-save').addEventListener('click', () => {
+        state.columns = [0, 1, 2, 3].map((idx) => document.getElementById(`cfg-col${idx}`).value.trim() || defaultState.columns[idx]);
+        document.getElementById('modal-settings').classList.add('hidden');
+        document.getElementById('modal-settings').classList.remove('flex');
+        renderAll();
+        showToast('Colunas atualizadas!');
+      });
+
+      // Export / Import JSON
+      document.getElementById('btn-export-json').addEventListener('click', () => {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `backup_compras_${state.date}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+      document.getElementById('inp-import-json').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const imported = JSON.parse(reader.result);
+            if (imported && Array.isArray(imported.pending)) {
+              state = { ...defaultState, ...imported };
+              renderAll();
+              showToast('Backup restaurado!');
+            }
+          } catch (err) {
+            showToast('Arquivo JSON inválido.');
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      // History Modal
+      document.getElementById('btn-history').addEventListener('click', () => {
+        const list = document.getElementById('history-list');
+        if (state.history.length === 0) {
+          list.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Nenhum envio salvo ainda.</p>`;
+        } else {
+          list.innerHTML = state.history
+            .map(
+              (h) => `
+              <div class="p-3 border border-slate-200 rounded-lg bg-slate-50 text-xs">
+                <div class="flex items-center justify-between font-semibold text-slate-800 mb-1">
+                  <span>Data: ${escapeHtml(formatBRDate(h.date))}</span>
+                  <span class="text-[11px] text-slate-500">${escapeHtml(h.savedAt)}</span>
+                </div>
+                <p class="text-slate-600">Entregues: <strong>${h.deliveredCount}</strong> • Pendências na data: <strong>${h.pendingCount}</strong></p>
+              </div>
+            `
+            )
+            .join('');
+        }
+        const m = document.getElementById('modal-history');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      });
+      document.getElementById('btn-history-close').addEventListener('click', () => {
+        document.getElementById('modal-history').classList.add('hidden');
+        document.getElementById('modal-history').classList.remove('flex');
+      });
+
+      // Confirm Modal Listeners
+      document.getElementById('btn-confirm-no').addEventListener('click', closeConfirm);
+      document.getElementById('btn-confirm-yes').addEventListener('click', () => {
+        const cb = pendingConfirmCallback;
+        closeConfirm();
+        if (cb) cb();
+      });
+
+      renderAll();
+    })();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
